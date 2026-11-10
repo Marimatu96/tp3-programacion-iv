@@ -1,0 +1,37 @@
+### Registro correcto
+POST http://localhost:3000/auth/registro
+Content-Type: application/json
+
+{
+  "nombre": "Usuario Prueba",
+  "email": "prueba@ejemplo.com",
+  "contrasena": "Clave12345"
+}
+
+### Registro con datos inválidos (debe dar 400)
+POST http://localhost:3000/auth/registro
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "email": "esto-no-es-un-email",
+  "contrasena": "123"
+}
+
+### Login correcto (devuelve el token)
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@ejemplo.com",
+  "contrasena": "Clave12345"
+}
+
+### Login con contraseña incorrecta (debe dar 401)
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@ejemplo.com",
+  "contrasena": "otraclave999"
+}

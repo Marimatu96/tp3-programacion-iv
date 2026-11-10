@@ -106,3 +106,38 @@ td {
 th {
   background: #e8edf2;
 }
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.enlace-boton {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: #3b6ea8;
+  color: #fff;
+  text-decoration: none;
+}
+
+.enlace-boton:hover {
+  background: #2f5a8a;
+}
+
+.boton-peligro {
+  background: #c0392b;
+}
+
+.boton-peligro:hover {
+  background: #a52f23;
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+td .acciones {
+  margin-top: 0;
+}

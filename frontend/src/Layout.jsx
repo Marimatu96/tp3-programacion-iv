@@ -15,6 +15,9 @@ export function Layout() {
           </li>
           {isAuthenticated ? (
             <>
+              <li className={pathname.startsWith("/vehiculos") ? "active" : ""}>
+                <Link to="/vehiculos">Vehículos</Link>
+              </li>
               <li className="usuario">{nombre}</li>
               <li>
                 <button

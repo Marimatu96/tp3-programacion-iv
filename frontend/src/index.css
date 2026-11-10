@@ -141,3 +141,8 @@ th {
 td .acciones {
   margin-top: 0;
 }
+
+.vencida {
+  color: #c0392b;
+  font-weight: 600;
+}

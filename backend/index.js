@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { conectarDB } from "./db.js";
 import authRouter, { authConfig } from "./auth.js";
+import vehiculosRouter from "./vehiculos.js";
 
 conectarDB();
 
@@ -22,6 +23,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRouter);
+
+app.use("/vehiculos", vehiculosRouter);
 
 app.listen(port, () => {
   console.log(`La aplicación está funcionando en el puerto ${port}`);

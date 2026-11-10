@@ -1,4 +1,4 @@
-import { body, validationResult } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 import passport from "passport";
 
 // Middleware de Passport: exige un token JWT válido
@@ -40,3 +40,29 @@ export const verificarValidaciones = (req, res, next) => {
   }
   next();
 };
+
+export const validarId = param("id")
+  .isInt({ min: 1 })
+  .withMessage("El id debe ser un entero positivo");
+
+export const validarVehiculo = [
+  body("marca")
+    .trim()
+    .isLength({ min: 1, max: 50 })
+    .withMessage("La marca es obligatoria (máximo 50 caracteres)"),
+  body("modelo")
+    .trim()
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El modelo es obligatorio (máximo 50 caracteres)"),
+  body("patente")
+    .trim()
+    .toUpperCase()
+    .matches(/^([A-Z]{3}\d{3}|[A-Z]{2}\d{3}[A-Z]{2})$/)
+    .withMessage("Patente inválida (formatos: ABC123 o AB123CD)"),
+  body("anio")
+    .isInt({ min: 1950, max: new Date().getFullYear() + 1 })
+    .withMessage("El año no es válido"),
+  body("capacidadCarga")
+    .isFloat({ gt: 0 })
+    .withMessage("La capacidad de carga debe ser un número mayor a 0"),
+];

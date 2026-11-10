@@ -1,0 +1,83 @@
+### Login (ejecutar primero; guarda el token)
+# @name login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@ejemplo.com",
+  "contrasena": "Clave12345"
+}
+
+###
+@token = {{login.response.body.token}}
+
+### Listar sin token (debe dar 401)
+GET http://localhost:3000/vehiculos
+
+### Listar con token
+GET http://localhost:3000/vehiculos
+Authorization: Bearer {{token}}
+
+### Crear vehículo
+POST http://localhost:3000/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "Mercedes-Benz",
+  "modelo": "Sprinter",
+  "patente": "ab123cd",
+  "anio": 2022,
+  "capacidadCarga": 1500
+}
+
+### Crear con datos inválidos (debe dar 400)
+POST http://localhost:3000/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "",
+  "modelo": "Sprinter",
+  "patente": "123",
+  "anio": 1800,
+  "capacidadCarga": -5
+}
+
+### Crear con patente repetida (debe dar 400)
+POST http://localhost:3000/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "Iveco",
+  "modelo": "Daily",
+  "patente": "AB123CD",
+  "anio": 2020,
+  "capacidadCarga": 2000
+}
+
+### Obtener por id
+GET http://localhost:3000/vehiculos/1
+Authorization: Bearer {{token}}
+
+### Obtener un id que no existe (debe dar 404)
+GET http://localhost:3000/vehiculos/9999
+Authorization: Bearer {{token}}
+
+### Modificar
+PUT http://localhost:3000/vehiculos/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "Mercedes-Benz",
+  "modelo": "Sprinter 515",
+  "patente": "AB123CD",
+  "anio": 2023,
+  "capacidadCarga": 1800
+}
+
+### Eliminar
+DELETE http://localhost:3000/vehiculos/1
+Authorization: Bearer {{token}}

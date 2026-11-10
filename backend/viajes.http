@@ -1,0 +1,201 @@
+### Login (ejecutar primero; guarda el token)
+# @name login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@ejemplo.com",
+  "contrasena": "Clave12345"
+}
+
+###
+@token = {{login.response.body.token}}
+
+### Crear vehículo de prueba (ejecutar una sola vez)
+# @name nuevoVehiculo
+POST http://localhost:3000/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marca": "Iveco",
+  "modelo": "Daily",
+  "patente": "AC456DE",
+  "anio": 2021,
+  "capacidadCarga": 2000
+}
+
+###
+@vehiculoId = {{nuevoVehiculo.response.body.id}}
+
+### Crear conductor de prueba (ejecutar una sola vez)
+# @name nuevoConductor
+POST http://localhost:3000/conductores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Ana",
+  "apellido": "Gómez",
+  "numeroDocumento": "28999888",
+  "numeroLicencia": "LIC55555",
+  "fechaAltaLicencia": "2020-03-15",
+  "fechaVencimientoLicencia": "2030-03-15"
+}
+
+###
+@conductorId = {{nuevoConductor.response.body.id}}
+
+### Listar sin token (debe dar 401)
+GET http://localhost:3000/viajes
+
+### Registrar viaje
+# @name nuevoViaje
+POST http://localhost:3000/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculoId": {{vehiculoId}},
+  "conductorId": {{conductorId}},
+  "fechaSalida": "2026-11-01T08:00",
+  "fechaLlegada": "2026-11-01T14:30",
+  "origen": "La Rioja",
+  "destino": "Córdoba",
+  "kilometros": 440,
+  "observaciones": "Entrega de mercadería"
+}
+
+###
+@viajeId = {{nuevoViaje.response.body.id}}
+
+### Registrar un segundo viaje
+POST http://localhost:3000/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculoId": {{vehiculoId}},
+  "conductorId": {{conductorId}},
+  "fechaSalida": "2026-11-03T07:00",
+  "fechaLlegada": "2026-11-03T12:00",
+  "origen": "Córdoba",
+  "destino": "La Rioja",
+  "kilometros": 440
+}
+
+### Viaje con datos inválidos (debe dar 400)
+POST http://localhost:3000/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculoId": 0,
+  "conductorId": "a",
+  "fechaSalida": "01/11/2026",
+  "fechaLlegada": "2026-11-01T14:30",
+  "origen": "",
+  "destino": "Córdoba",
+  "kilometros": -10
+}
+
+### Llegada anterior a la salida (debe dar 400)
+POST http://localhost:3000/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculoId": {{vehiculoId}},
+  "conductorId": {{conductorId}},
+  "fechaSalida": "2026-11-05T10:00",
+  "fechaLlegada": "2026-11-05T08:00",
+  "origen": "La Rioja",
+  "destino": "Chilecito",
+  "kilometros": 190
+}
+
+### Vehículo inexistente (debe dar 400)
+POST http://localhost:3000/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculoId": 99999,
+  "conductorId": {{conductorId}},
+  "fechaSalida": "2026-11-05T08:00",
+  "fechaLlegada": "2026-11-05T10:00",
+  "origen": "La Rioja",
+  "destino": "Chilecito",
+  "kilometros": 190
+}
+
+### Licencia vencida en la fecha de salida (debe dar 403)
+POST http://localhost:3000/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculoId": {{vehiculoId}},
+  "conductorId": {{conductorId}},
+  "fechaSalida": "2035-01-10T08:00",
+  "fechaLlegada": "2035-01-10T12:00",
+  "origen": "La Rioja",
+  "destino": "Chilecito",
+  "kilometros": 190
+}
+
+### Historial completo
+GET http://localhost:3000/viajes
+Authorization: Bearer {{token}}
+
+### Historial por vehículo
+GET http://localhost:3000/viajes?vehiculoId={{vehiculoId}}
+Authorization: Bearer {{token}}
+
+### Historial por conductor
+GET http://localhost:3000/viajes?conductorId={{conductorId}}
+Authorization: Bearer {{token}}
+
+### Total de kilómetros por vehículo
+GET http://localhost:3000/viajes/kilometros?vehiculoId={{vehiculoId}}
+Authorization: Bearer {{token}}
+
+### Total de kilómetros por conductor
+GET http://localhost:3000/viajes/kilometros?conductorId={{conductorId}}
+Authorization: Bearer {{token}}
+
+### Total de kilómetros sin indicar filtro (debe dar 400)
+GET http://localhost:3000/viajes/kilometros
+Authorization: Bearer {{token}}
+
+### Detalle de un viaje
+GET http://localhost:3000/viajes/{{viajeId}}
+Authorization: Bearer {{token}}
+
+### Viaje inexistente (debe dar 404)
+GET http://localhost:3000/viajes/9999
+Authorization: Bearer {{token}}
+
+### Modificar viaje
+PUT http://localhost:3000/viajes/{{viajeId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vehiculoId": {{vehiculoId}},
+  "conductorId": {{conductorId}},
+  "fechaSalida": "2026-11-01T08:00",
+  "fechaLlegada": "2026-11-01T15:00",
+  "origen": "La Rioja",
+  "destino": "Córdoba",
+  "kilometros": 445,
+  "observaciones": "Hubo demora en ruta"
+}
+
+### Eliminar un vehículo con viajes (debe dar 400)
+DELETE http://localhost:3000/vehiculos/{{vehiculoId}}
+Authorization: Bearer {{token}}
+
+### Eliminar viaje
+DELETE http://localhost:3000/viajes/{{viajeId}}
+Authorization: Bearer {{token}}

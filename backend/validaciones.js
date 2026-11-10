@@ -1,4 +1,4 @@
-import { body, param, validationResult } from "express-validator";
+import { body, param, query, validationResult } from "express-validator";
 import passport from "passport";
 
 // Middleware de Passport: exige un token JWT válido
@@ -93,4 +93,67 @@ export const validarConductor = [
     .withMessage("La fecha de vencimiento debe tener formato AAAA-MM-DD")
     .custom((vencimiento, { req }) => vencimiento > req.body.fechaAltaLicencia)
     .withMessage("El vencimiento debe ser posterior a la fecha de alta"),
+];
+
+const FORMATO_FECHA_HORA = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/;
+
+export const validarViaje = [
+  body("vehiculoId")
+    .isInt({ min: 1 })
+    .withMessage("vehiculoId debe ser un entero positivo"),
+  body("conductorId")
+    .isInt({ min: 1 })
+    .withMessage("conductorId debe ser un entero positivo"),
+  body("fechaSalida")
+    .matches(FORMATO_FECHA_HORA)
+    .withMessage("La fecha de salida debe tener formato AAAA-MM-DDTHH:MM")
+    .bail()
+    .isISO8601({ strict: true })
+    .withMessage("La fecha de salida no es válida"),
+  body("fechaLlegada")
+    .matches(FORMATO_FECHA_HORA)
+    .withMessage("La fecha de llegada debe tener formato AAAA-MM-DDTHH:MM")
+    .bail()
+    .isISO8601({ strict: true })
+    .withMessage("La fecha de llegada no es válida")
+    .custom(
+      (llegada, { req }) => new Date(llegada) >= new Date(req.body.fechaSalida),
+    )
+    .withMessage("La llegada no puede ser anterior a la salida"),
+  body("origen")
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage("El origen es obligatorio (máximo 100 caracteres)"),
+  body("destino")
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage("El destino es obligatorio (máximo 100 caracteres)"),
+  body("kilometros")
+    .isFloat({ gt: 0 })
+    .withMessage("Los kilómetros deben ser un número mayor a 0"),
+  body("observaciones")
+    .optional({ values: "null" })
+    .trim()
+    .isLength({ max: 1000 })
+    .withMessage("Las observaciones admiten hasta 1000 caracteres"),
+];
+
+// Filtros del historial de viajes
+export const validarFiltrosViajes = [
+  query("vehiculoId")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("vehiculoId debe ser un entero positivo"),
+  query("conductorId")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("conductorId debe ser un entero positivo"),
+];
+
+// Para el total de kilómetros: exactamente un filtro
+export const validarFiltroKilometros = [
+  ...validarFiltrosViajes,
+  query("vehiculoId")
+    .custom((_, { req }) => Boolean(req.query.vehiculoId) !== Boolean(req.query.conductorId))
+    .withMessage("Indicá vehiculoId o conductorId (uno solo)"),
 ];

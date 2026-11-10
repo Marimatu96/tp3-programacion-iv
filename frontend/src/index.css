@@ -169,3 +169,9 @@ td .acciones {
   background: #e8edf2;
   border-radius: 6px;
 }
+
+.exito {
+  margin: 0 0 0.5rem;
+  color: #1e7e34;
+  font-weight: 600;
+}

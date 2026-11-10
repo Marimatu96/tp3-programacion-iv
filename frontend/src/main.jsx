@@ -16,6 +16,7 @@ import { ConductorDetalles } from "./ConductorDetalles";
 import { Viajes } from "./Viajes";
 import { ViajeCrear } from "./ViajeCrear";
 import { ViajeDetalles } from "./ViajeDetalles";
+import { Registro } from "./Registro";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -25,6 +26,7 @@ createRoot(document.getElementById("root")).render(
           <Route element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
+            <Route path="registro" element={<Registro />} />
 
             <Route path="vehiculos" element={<AuthLayout />}>
               <Route index element={<Vehiculos />} />

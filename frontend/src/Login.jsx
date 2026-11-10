@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useAuth } from "./Auth";
 
 export function Login() {
@@ -8,6 +8,7 @@ export function Login() {
   const [contrasena, setContrasena] = useState("");
   const [errores, setErrores] = useState({});
   const navigate = useNavigate();
+  const { state } = useLocation();
 
   const validar = () => {
     const nuevos = {};
@@ -37,6 +38,9 @@ export function Login() {
   return (
     <>
       <h2>Ingresar</h2>
+      {state?.registrado && (
+        <p className="exito">Cuenta creada. Ya podés ingresar.</p>
+      )}
       <form onSubmit={handleSubmit} noValidate>
         <label htmlFor="email">Email:</label>
         <input
@@ -67,6 +71,9 @@ export function Login() {
           </Link>
         </div>
       </form>
+      <p>
+        ¿No tenés cuenta? <Link to="/registro">Registrate</Link>
+      </p>
     </>
   );
 }

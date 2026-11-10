@@ -66,3 +66,31 @@ export const validarVehiculo = [
     .isFloat({ gt: 0 })
     .withMessage("La capacidad de carga debe ser un número mayor a 0"),
 ];
+
+export const validarConductor = [
+  body("nombre")
+    .trim()
+    .matches(/^[\p{L} '-]{1,50}$/u)
+    .withMessage("El nombre es obligatorio: solo letras, hasta 50 caracteres"),
+  body("apellido")
+    .trim()
+    .matches(/^[\p{L} '-]{1,50}$/u)
+    .withMessage("El apellido es obligatorio: solo letras, hasta 50 caracteres"),
+  body("numeroDocumento")
+    .trim()
+    .matches(/^\d{7,8}$/)
+    .withMessage("El número de documento debe tener 7 u 8 dígitos"),
+  body("numeroLicencia")
+    .trim()
+    .isAlphanumeric()
+    .isLength({ min: 5, max: 20 })
+    .withMessage("El número de licencia debe ser alfanumérico (5 a 20 caracteres)"),
+  body("fechaAltaLicencia")
+    .isDate({ format: "YYYY-MM-DD", strictMode: true })
+    .withMessage("La fecha de alta debe tener formato AAAA-MM-DD"),
+  body("fechaVencimientoLicencia")
+    .isDate({ format: "YYYY-MM-DD", strictMode: true })
+    .withMessage("La fecha de vencimiento debe tener formato AAAA-MM-DD")
+    .custom((vencimiento, { req }) => vencimiento > req.body.fechaAltaLicencia)
+    .withMessage("El vencimiento debe ser posterior a la fecha de alta"),
+];

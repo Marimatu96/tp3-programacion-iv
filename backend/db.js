@@ -11,6 +11,7 @@ export async function conectarDB() {
       password: process.env.DB_PASS,
       database: process.env.DB_DATABASE,
       decimalNumbers: true,
+      dateStrings: true,
     });
     console.log("Conectado a la base de datos");
   } catch (e) {
